@@ -15,7 +15,13 @@ public class BankAccountService: IBankAccountService
 
     public List<BankAccount> GetBankAccounts()
     {
-        var bankAccounts = _repositoryWrapper.BankAccountRepository.FindAll().ToList();
+        var bankAccounts = _repositoryWrapper.BankAccountRepository.FindAll().Where(x=>x.isService==false).ToList();
+        return bankAccounts;
+    }
+
+    public List<BankAccount> GetBankAccountsThatAreService()
+    {
+        var bankAccounts = _repositoryWrapper.BankAccountRepository.FindAll().Where(x => x.isService == true).ToList();
         return bankAccounts;
     }
 

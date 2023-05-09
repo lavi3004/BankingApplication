@@ -16,5 +16,7 @@ public class BankAccount
 
     public string Currency { get; set; }
 
+    public bool isService { get; set; }
+
     public IdentityUser User { get; set; }
 }

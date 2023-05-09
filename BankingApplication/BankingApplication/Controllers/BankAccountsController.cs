@@ -4,6 +4,7 @@ using BankingApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using BankingApplication.Services.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BankingApplication.Controllers
 {
@@ -46,6 +47,13 @@ namespace BankingApplication.Controllers
         // GET: BankAccounts/Create
         public IActionResult Create()
         {
+            ViewBag.Currency = Enum.GetValues(typeof(CurrencyEnum))
+                               .Cast<CurrencyEnum>()
+                               .Select(c => new SelectListItem
+                               {
+                                   Text = c.ToString(),
+                                   Value = c.ToString()
+                               });
             return View();
         }
 

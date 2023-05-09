@@ -48,8 +48,8 @@ namespace BankingApplication.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id");
-            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id");
+            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Name");
+            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Name");
             return View();
         }
 

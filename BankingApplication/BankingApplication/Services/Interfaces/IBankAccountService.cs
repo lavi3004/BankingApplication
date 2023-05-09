@@ -9,6 +9,7 @@ public interface IBankAccountService
     public void Update(BankAccount bankAccount);
     public void Delete(int id);
     public BankAccount GetBankAccountById(int id);
-   
+    public List<BankAccount> GetBankAccountsThatAreService();
+
     //public BankAccount GetAuthorByName(string name);
 }
