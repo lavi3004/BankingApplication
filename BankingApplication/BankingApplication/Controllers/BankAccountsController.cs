@@ -46,7 +46,7 @@ namespace BankingApplication.Controllers
 
         // GET: BankAccounts/Create
         public IActionResult Create()
-        {
+        {          
             ViewBag.Currency = Enum.GetValues(typeof(CurrencyEnum))
                                .Cast<CurrencyEnum>()
                                .Select(c => new SelectListItem
@@ -62,11 +62,12 @@ namespace BankingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IBAN,SWIFT,Balance,Currency")] BankAccount bankAccount)
+        public async Task<IActionResult> Create([Bind("Id,Name,IBAN,Balance,Currency")] BankAccount bankAccount)
         {           
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
             bankAccount.User = user;
+            bankAccount.SWIFT = _bankAccountService.GenerateSwift(); 
 
             //if (ModelState.IsValid)
             //{

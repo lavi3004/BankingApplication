@@ -10,6 +10,7 @@ public interface IBankAccountService
     public void Delete(int id);
     public BankAccount GetBankAccountById(int id);
     public List<BankAccount> GetBankAccountsThatAreService();
+    public string GenerateSwift();
 
     //public BankAccount GetAuthorByName(string name);
 }
