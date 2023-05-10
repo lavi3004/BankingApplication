@@ -13,9 +13,9 @@ public class TransactionService: ITransactionService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public List<Transaction> GetTransactions()
+    public List<Transaction> GetTransactions(string userId)
     {
-        var transactions = _repositoryWrapper.TransactionRepository.FindAll().ToList();
+        var transactions = _repositoryWrapper.TransactionRepository.FindAll().Where(x=>x.Sender.User.Id == userId).ToList();
         return transactions;
     }
 
@@ -47,7 +47,46 @@ public class TransactionService: ITransactionService
         BankAccount reciver = _repositoryWrapper.BankAccountRepository.FindByCondition(x => x.Id == reciverId).FirstOrDefault();
 
         sender.Balance = sender.Balance - ammount;
-        reciver.Balance = sender.Balance + ammount;
+        if (sender.Currency == reciver.Currency)
+        {
+            reciver.Balance = reciver.Balance + ammount;
+        }
+        else if (sender.Currency == "RON" && reciver.Currency != "RON")
+        {
+
+            if (reciver.Currency == "USD")
+            {
+                reciver.Balance = reciver.Balance + ammount * 3 / 10;
+            }
+            else
+            {
+                reciver.Balance = reciver.Balance + ammount * 2 / 10;
+            }
+        }
+        else if (sender.Currency == "USD" && reciver.Currency != "USD")
+        {
+
+            if (reciver.Currency == "RON")
+            {
+                reciver.Balance = reciver.Balance + ammount * 5;
+            }
+            else
+            {
+                reciver.Balance = reciver.Balance + ammount * 1;
+            }
+        }
+        else if (sender.Currency == "EURO" && reciver.Currency != "EURO")
+        {
+
+            if (reciver.Currency == "RON")
+            {
+                reciver.Balance = reciver.Balance + ammount * 4;
+            }
+            else
+            {
+                reciver.Balance = reciver.Balance + ammount * 1;
+            }
+        }
 
         _repositoryWrapper.BankAccountRepository.Update(sender);
         _repositoryWrapper.BankAccountRepository.Update(reciver);

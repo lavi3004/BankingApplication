@@ -38,27 +38,24 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Amount)
+                    @Html.DisplayFor(modelItem => item.Amount) @Html.DisplayFor(modelItem => item.Sender.Currency)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                 @Html.DisplayFor(modelItem => item.SenderId)
+                 @Html.DisplayFor(modelItem => item.Sender.Name)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.ReciverId)
+                    @Html.DisplayFor(modelItem => item.Reciver.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a> 
             </td>
         </tr>
 }
     </tbody>
 </table>
 
-<p class="btn btn-primary">
-    <a asp-action="Create" class="text-white">Create New Transaction</a>
-</p>
+<a asp-action="Create" class="text-white btn btn-primary">Create New Transaction</a>
+

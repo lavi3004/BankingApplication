@@ -9,9 +9,11 @@ using BankingApplication.Models;
 using BankingApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApplication.Controllers
 {
+    [Authorize]
     public class CardsController : Controller
     {
         private readonly ICardService _cardService;

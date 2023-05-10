@@ -166,19 +166,14 @@
                     <div class="expiry">
                         <p class="card-heading-text">Expiry date</p>
                         <p class="card-text">@Html.Raw(item.ExpirationDate.ToString("MM\\/yy"))</p>
-                        @*<p class="card-text">@item.ExpirationDate.ToString("MM\\/yy")</p>*@
                     </div>
                     <div class="cvv">
                         <p class="card-heading-text">CVV</p>
                         <p class="card-text">@Html.DisplayFor(modelItem => item.CVV)</p>
                     </div>
-                </div>
-
-                <a class="circle-button1" asp-action="Edit" asp-route-id="@item.Id">Block<br>Card</a>
-                <a class="circle-button2" asp-action="Details" asp-route-id="@item.Id">Set limit</a>
+                </div>              
                 <a class="circle-button3" asp-controller="Transactions" asp-action="Index">Trans<br>actions</a>
 
-                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
             </div>
         }
     </div>

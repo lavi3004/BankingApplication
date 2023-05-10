@@ -4,7 +4,7 @@ namespace BankingApplication.Services.Interfaces;
 
 public interface ITransactionService
 {
-    public List<Transaction> GetTransactions();
+    public List<Transaction> GetTransactions(string userId);
     public void Create(Transaction transaction);
     public void Update(Transaction transaction);
     public void Delete(int id);

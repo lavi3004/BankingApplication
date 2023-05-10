@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using BankingApplication.Services.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApplication.Controllers
 {
+    [Authorize]
     public class BankAccountsController : Controller
     {
         private readonly IBankAccountService _bankAccountService;
@@ -23,7 +25,9 @@ namespace BankingApplication.Controllers
         // GET: BankAccounts
         public async Task<IActionResult> Index()
         {
-            var bankAccounts= _bankAccountService.GetBankAccounts();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            var bankAccounts= _bankAccountService.GetBankAccountsOfUser(userId);
             return View(bankAccounts);
         }
 
