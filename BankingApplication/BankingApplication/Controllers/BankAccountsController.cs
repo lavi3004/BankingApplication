@@ -4,9 +4,12 @@ using BankingApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using BankingApplication.Services.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApplication.Controllers
 {
+    [Authorize]
     public class BankAccountsController : Controller
     {
         private readonly IBankAccountService _bankAccountService;
@@ -22,7 +25,9 @@ namespace BankingApplication.Controllers
         // GET: BankAccounts
         public async Task<IActionResult> Index()
         {
-            var bankAccounts= _bankAccountService.GetBankAccounts();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            var bankAccounts= _bankAccountService.GetBankAccountsOfUser(userId);
             return View(bankAccounts);
         }
 
@@ -45,7 +50,14 @@ namespace BankingApplication.Controllers
 
         // GET: BankAccounts/Create
         public IActionResult Create()
-        {
+        {          
+            ViewBag.Currency = Enum.GetValues(typeof(CurrencyEnum))
+                               .Cast<CurrencyEnum>()
+                               .Select(c => new SelectListItem
+                               {
+                                   Text = c.ToString(),
+                                   Value = c.ToString()
+                               });
             return View();
         }
 
@@ -54,11 +66,12 @@ namespace BankingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IBAN,SWIFT,Balance,Currency")] BankAccount bankAccount)
+        public async Task<IActionResult> Create([Bind("Id,Name,IBAN,Balance,Currency")] BankAccount bankAccount)
         {           
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
             bankAccount.User = user;
+            bankAccount.SWIFT = _bankAccountService.GenerateSwift(); 
 
             //if (ModelState.IsValid)
             //{

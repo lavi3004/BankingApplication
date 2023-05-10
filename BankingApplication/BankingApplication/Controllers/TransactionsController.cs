@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BankingApplication.Models;
 using BankingApplication.Services.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApplication.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
         private readonly ITransactionService _transactionService;
@@ -24,7 +23,13 @@ namespace BankingApplication.Controllers
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            var transactions = _transactionService.GetTransactions();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var transactions = _transactionService.GetTransactions(userId);
+            for(int i = 0; i < transactions.Count(); i++)
+            {
+                transactions[i].Reciver = _bankAccountService.GetBankAccountById(transactions[i].ReciverId ?? 0);
+                transactions[i].Sender = _bankAccountService.GetBankAccountById(transactions[i].SenderId ?? 0);
+            }
             return View(transactions);
         }
 
@@ -37,6 +42,8 @@ namespace BankingApplication.Controllers
             }
 
             var transaction = _transactionService.GetTransactionById(id);
+            transaction.Reciver = _bankAccountService.GetBankAccountById(transaction.ReciverId ?? 0);
+            transaction.Sender = _bankAccountService.GetBankAccountById(transaction.SenderId ?? 0);
             if (transaction == null)
             {
                 return NotFound();
@@ -48,8 +55,9 @@ namespace BankingApplication.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id");
-            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Name");
+            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccountsOfUser(userId), "Id", "Name");
             return View();
         }
 
@@ -58,16 +66,47 @@ namespace BankingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Amount,Date,SenderId,ReciverId")] Transaction transaction)
+        public async Task<IActionResult> Create([Bind("Id,Amount,SenderId,ReciverId")] Transaction transaction)
         {
+            transaction.Date = DateTime.Now;
             if (ModelState.IsValid)
-            {
+            {   
                 _transactionService.Create(transaction);
                 _transactionService.PerformTransaction(transaction.SenderId, transaction.ReciverId, transaction.Amount);
                 return RedirectToAction(nameof(Index));
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id", transaction.ReciverId);
-            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccounts(), "Id", "Id", transaction.SenderId);
+            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccountsOfUser(userId), "Id", "Name");
+            return View(transaction);
+        }
+
+
+        public IActionResult Create1()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccountsThatAreService(), "Id", "Name");
+            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccountsOfUser(userId), "Id", "Name");
+            return View();
+        }
+
+        // POST: Transactions/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create1([Bind("Id,Amount,SenderId,ReciverId")] Transaction transaction)
+        {
+            transaction.Date = DateTime.Now;
+            if (ModelState.IsValid)
+            {  
+                _transactionService.Create(transaction);
+                _transactionService.PerformTransaction(transaction.SenderId, transaction.ReciverId, transaction.Amount);
+                return RedirectToAction(nameof(Index));
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["ReciverId"] = new SelectList(_bankAccountService.GetBankAccountsThatAreService(), "Id", "Id", transaction.ReciverId);
+            ViewData["SenderId"] = new SelectList(_bankAccountService.GetBankAccountsOfUser(userId), "Id", "Name");
             return View(transaction);
         }
 

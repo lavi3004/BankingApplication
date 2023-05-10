@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BankingApplication.Models;
 using BankingApplication.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApplication.Controllers
 {
+    [Authorize]
     public class CardsController : Controller
     {
         private readonly ICardService _cardService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CardsController(ICardService cardService)
+        public CardsController(ICardService cardService, UserManager<IdentityUser> userManager)
         {
             _cardService = cardService;
+            _userManager = userManager;
         }
 
         // GET: Cards
@@ -56,11 +62,12 @@ namespace BankingApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,CardNumber,ExpirationDate,CVV,IsLocked")] Card card)
         {
-            if (ModelState.IsValid)
-            {
-                _cardService.Create(card);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            card.User = user;
+            _cardService.Create(card);
                 return RedirectToAction(nameof(Index));
-            }
+
             return View(card);
         }
 

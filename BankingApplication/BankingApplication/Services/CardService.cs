@@ -1,6 +1,8 @@
 ﻿using BankingApplication.Models;
 using BankingApplication.Repositories.Interfaces;
 using BankingApplication.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace BankingApplication.Services;
 
