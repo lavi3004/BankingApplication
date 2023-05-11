@@ -17,4 +17,17 @@ public class Card
     public IdentityUser User { get; set; }
 
     public bool IsLocked { get; set; }
+
+    public Card()
+    {
+        
+    }
+
+    public Card(int Id, IdentityUser User)
+    {
+        this.Id = Id;
+        this.User = User;
+    }
 }
+
+
