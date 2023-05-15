@@ -1,6 +1,7 @@
 ﻿using BankingApplication.Models;
 using BankingApplication.Repositories.Interfaces;
 using BankingApplication.Services;
+using BankingApplication.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using System;
@@ -72,6 +73,43 @@ namespace BankingApplicationTest
             var result = cardService.GetCardById(card.Id);
 
             Assert.AreNotEqual(card, result);
+        }
+
+        [TestMethod]
+        public void Update_Card()
+        {
+            IdentityUser user = new IdentityUser("user");
+
+            Card card = new Card(1, user);
+
+            repositoryWrapper.Setup(r => r.CardRepository.FindByCondition(x => x.Id == 1))
+                .Returns(new List<Card> { card }.AsQueryable());
+
+            repositoryWrapper.Setup(r => r.CardRepository.Update(It.IsAny<Card>()))
+               .Verifiable();
+
+            var result = cardService.GetCardById(card.Id);
+
+            Assert.AreEqual(card, result);
+        }
+
+        [TestMethod]
+        public void Delete_Card()
+        {
+            IdentityUser user = new IdentityUser("user");
+
+            Card card = new Card(1, user);
+
+            repositoryWrapper.Setup(r => r.CardRepository.FindByCondition(x => x.Id == 1))
+                .Returns(new List<Card> { }.AsQueryable());
+
+            repositoryWrapper.Setup(r => r.CardRepository.Delete(It.IsAny<Card>()));
+
+            cardService.Delete(card.Id);
+
+            var result = cardService.GetCardById(card.Id);
+
+            Assert.AreEqual(null, result);
         }
     }
 }

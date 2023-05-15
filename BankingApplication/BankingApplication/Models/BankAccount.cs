@@ -31,4 +31,12 @@ public class BankAccount
         this.Name = Name;
         this.User = User;
     }
+
+    public BankAccount(int id, string Name, int Balance, IdentityUser User)
+    {
+        this.Id = id;
+        this.Name = Name;
+        this.Balance = Balance;
+        this.User = User;
+    }
 }

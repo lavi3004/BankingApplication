@@ -75,6 +75,47 @@ namespace BankingApplicationTest
             var result = bankAccountService.GetBankAccountById(account.Id);
 
             Assert.AreNotEqual(account, result);
+
+
+        }
+
+        [TestMethod]
+        public void Update_BankAccount()
+        {
+            IdentityUser user = new IdentityUser("user");
+
+            BankAccount account = new BankAccount(1, "acc1", user);
+
+            repositoryWrapper.Setup(r => r.BankAccountRepository.Update(It.IsAny<BankAccount>()))
+                   .Verifiable();
+
+            repositoryWrapper.Setup(r => r.BankAccountRepository.FindByCondition(x => x.Id == 1))
+               .Returns(new List<BankAccount> { account }.AsQueryable());
+
+            bankAccountService.Update(account);
+
+            var result = bankAccountService.GetBankAccountById(account.Id);
+
+            Assert.AreEqual(account, result);
+        }
+
+        [TestMethod]
+        public void Delete_BankAccount()
+        {
+            IdentityUser user = new IdentityUser("user");
+
+            BankAccount account = new BankAccount(1, "acc1", user);
+
+            repositoryWrapper.Setup(r => r.BankAccountRepository.Delete(It.IsAny<BankAccount>()));
+
+            repositoryWrapper.Setup(r => r.BankAccountRepository.FindByCondition(x => x.Id == 1))
+               .Returns(new List<BankAccount> { }.AsQueryable());
+
+            bankAccountService.Delete(account.Id);
+
+            var result = bankAccountService.GetBankAccountById(account.Id);
+
+            Assert.AreEqual(null, result);
         }
     }
 }
