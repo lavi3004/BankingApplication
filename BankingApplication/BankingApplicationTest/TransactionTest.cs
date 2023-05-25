@@ -13,7 +13,6 @@ namespace BankingApplicationTest
     public class TransactionTest
     {
         private TransactionService transactionService;
-        private BankAccountService bankAccountService;
         private Mock<IRepositoryWrapper> repositoryWrapper;
 
         [TestInitialize]
@@ -21,9 +20,7 @@ namespace BankingApplicationTest
         {
             repositoryWrapper= new Mock<IRepositoryWrapper>();
 
-            transactionService= new TransactionService(repositoryWrapper.Object);
-
-            bankAccountService= new BankAccountService(repositoryWrapper.Object);
+            transactionService= new TransactionService(repositoryWrapper.Object); 
         }
 
         [TestMethod]
@@ -125,38 +122,5 @@ namespace BankingApplicationTest
 
             Assert.AreEqual(null, result);
         }
-
-
-        //[TestMethod]
-        //public void Make_A_Payment()
-        //{
-        //    IdentityUser user = new IdentityUser("user");
-
-        //    BankAccount account1 = new BankAccount(1, "acc1", 100, user);
-        //    BankAccount account2 = new BankAccount(2, "acc2",100, user);
-
-        //    int ammount = 100;
-
-        //    Transaction t1 = new Transaction(1, 100, DateTime.Now, 1, 2);
-
-        //    repositoryWrapper.Setup(r => r.BankAccountRepository.FindByCondition(x => x.Id == 1))
-        //        .Returns(new List<BankAccount> { account1 }.AsQueryable());
-
-        //    repositoryWrapper.Setup(r => r.BankAccountRepository.FindByCondition(x => x.Id == 2))
-        //      .Returns(new List<BankAccount> { account2 }.AsQueryable());
-
-        //    repositoryWrapper.Setup(r => r.BankAccountRepository.Update(It.IsAny<BankAccount>()))
-        //         .Verifiable();
-
-        //    transactionService.PerformTransaction(account1.Id, account2.Id, ammount);
-
-        //    var result1= bankAccountService.GetBankAccountById(account1.Id);
-        //    var result2= bankAccountService.GetBankAccountById(account2.Id);
-
-
-        //     Assert.AreEqual(result1.Balance, account1.Balance-ammount);
-        //}
-
-
     }
 }
